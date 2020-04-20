@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reading data into a template</title>
+  </head>
+  <style>
+    table,
+    td,
+    th {
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 50%;
+    }
+
+    th,
+    td {
+      padding: 0.75rem;
+    }
+
+    th {
+      background-color: #666;
+      color: #eee;
+    }
+  </style>
+  <body>
+    <h2>Select a Major</h2>
+    <button id="btnCitMajors" type="button" disabled>CIT Majors</button>
+    <button id="btnBusMajors" type="button" disabled>BUS Majors</button>
+
+    <h3>We filter our dataset by major</h3>
+
+    <table id="myTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Major</th>
+          <th>Midterm</th>
+          <th>Final</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+  <script>
+    const btnCitMajors = document.getElementById("btnCitMajors");
+    const btnBusMajors = document.getElementById("btnBusMajors");
+    const tableBody = document.getElementById("tableBody");
+
+    const tableRowTemplate = Handlebars.compile(
+      `{{#each students}}
+        <tr>
+          <td>{{name}}</td>
+          <td>{{major}}</td>
+          <td>{{midterm}}</td>
+          <td>{{final}}</td>
+        </tr>
+      {{/each}}`
+    );
+
+    let jsonData = [];
+
+    fetch("./cit5students.json")
+      .then((res) => {
+        return res.json();
+      })
+      .then((res) => {
+        btnCitMajors.disabled = false;
+        btnBusMajors.disabled = false;
+        jsonData = res;
+      })
+      .catch((err) => {
+        console.log("An error has ocurred");
+        console.error(err);
+      });
+
+    btnCitMajors.addEventListener("click", function () {
+      const filteredData = jsonData.filter(function (student) {
+        return student.major === "CIT";
+      });
+      tableBody.innerHTML = tableRowTemplate({
+        students: filteredData,
+      });
+    });
+
+    btnBusMajors.addEventListener("click", function () {
+      const filteredData = jsonData.filter(function (student) {
+        return student.major === "BUS";
+      });
+      tableBody.innerHTML = tableRowTemplate({
+        students: filteredData,
+      });
+    });
+  </script>
+</html>
