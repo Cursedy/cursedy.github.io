@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grade Point Averages</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.4-build.3588/angular.min.js"></script>
+  </head>
+  <body>
+    <div ng-app="gpa" ng-controller="gpaController">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Our Website</a>
+
+        <ul class="navbar-nav mr-auto" style="flex-direction: row;">
+          <li class="nav-item" style="margin: 0rem 1rem;">
+            <a class="nav-link" href="index.html">All Advisees</a>
+          </li>
+          <li class="nav-item active" style="margin: 0rem 1rem;">
+            <a class="nav-link" href="#">Grade Point Averages</a>
+          </li>
+        </ul>
+      </nav>
+      <section class="container mt-4">
+        <h1>Advisees</h1>
+        <form class="mt-4">
+          <div class="form-group">
+            <label for="input-search">Search Advisees</label>
+            <input
+              type="text"
+              class="form-control"
+              id="input-search"
+              placeholder="Search by last name..."
+              ng-model="inputSearch"
+            />
+          </div>
+        </form>
+
+        <table class="table mt-5">
+          <thead>
+            <tr>
+              <th scope="col">sid</th>
+              <th scope="col">last name</th>
+              <th scope="col">first name</th>
+              <th scope="col">gpa</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              ng-repeat="student in students | filter:{last_name: inputSearch}"
+            >
+              <th scope="row">{{student.id}}</th>
+              <td>{{student.last_name}}</td>
+              <td>{{student.first_name}}</td>
+              <td>{{(student.gpa_points / student.credit_hrs).toFixed(1)}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </body>
+  <script>
+    const app = angular.module("gpa", []);
+    app.controller("gpaController", function ($scope, $http) {
+      $http.get("students.json").success(function (res) {
+        $scope.students = res;
+      });
+    });
+  </script>
+</html>
